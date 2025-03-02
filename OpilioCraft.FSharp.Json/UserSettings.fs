@@ -38,7 +38,13 @@ let saveWithOptions<'T> jsonFile jsonOptions settings =
     let json = JsonSerializer.Serialize<'T>(settings, options = jsonOptions) in
     saveGuard jsonFile <| fun uri -> File.WriteAllText(uri, json)
 
-let save<'T> jsonFile settings = saveWithOptions<'T> jsonFile (JsonSerializerOptions.Default)
+let save<'T> jsonFile = saveWithOptions<'T> jsonFile (JsonSerializerOptions.Default)
+
+// verification
+let verify test onFail settings =
+    match test settings with
+    | true -> Ok settings
+    | _ -> Error <| onFail settings
 
 // supportive functions
 let tryGetProperty name settings : 'T option =
@@ -47,10 +53,6 @@ let tryGetProperty name settings : 'T option =
     |> Option.map (fun prop -> prop.GetValue(box settings))
     |> Option.bind (function | :? 'T as typedValue -> Some typedValue | _ -> None)
 
-let verify test onFail settings =
-    match settings |> test with
-    | true -> settings |> Ok
-    | _ -> settings |> onFail |> Error
 
 module Version =
     [<Literal>]

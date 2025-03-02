@@ -5,8 +5,6 @@
 
     <Version>7.0.0</Version>
     <Description>Collection of some useful code snippets for FSharp development</Description>
-    <Authors>Carsten Schäfer</Authors>
-    <RepositoryUrl>https://github.com/EinQuadrat/OpilioCraft.FSharp.git</RepositoryUrl>
 
   </PropertyGroup>
 
