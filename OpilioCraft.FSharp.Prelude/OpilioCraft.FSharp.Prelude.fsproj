@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+
+    <Version>7.0.0</Version>
+    <Description>Collection of some useful code snippets for FSharp development</Description>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Prelude.fs" />
+    <Compile Include="DiscriminatedUnionExtension.fs" />
+    <Compile Include="DisposableBase.fs" />
+    <Compile Include="FileSystem.fs" />
+    <Compile Include="Fingerprint.fs" />
+    <Compile Include="FlexibleValue.fs" />
+    <Compile Include="IO.fs" />
+    <Compile Include="ObservableObject.fs" />
+    <Compile Include="OptionExtension.fs" />
+    <Compile Include="ResultExtension.fs" />
+    <Compile Include="Text.fs" />
+    <Compile Include="TryWrapper.fs" />
+    <Compile Include="ActivePatterns.fs" />
+  </ItemGroup>
+
+</Project>
