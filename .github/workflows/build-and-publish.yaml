@@ -2,9 +2,6 @@ name: Build and Publish
 
 on: [push, workflow_dispatch]
 
-permissions:
-  packages: write
-
 env:
   DOTNET_VERSION: '9.x'
   
