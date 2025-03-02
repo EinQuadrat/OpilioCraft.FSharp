@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="EnumUnionConverter.fs" />
     <Compile Include="UserSettings.fs" />
   </ItemGroup>
 

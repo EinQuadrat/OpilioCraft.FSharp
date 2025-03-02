@@ -1,11 +1,8 @@
-﻿module OpilioCraft.FSharp.Prelude.UserSettings
+﻿module OpilioCraft.FSharp.Json.UserSettings
 
 open System
 open System.IO
 open System.Text.Json
-open System.Text.Json.Serialization
-
-open Microsoft.FSharp.Reflection
 
 open OpilioCraft.FSharp.Prelude.IO
 
@@ -20,25 +17,6 @@ type ErrorReason =
 // corresponding exceptions
 exception UserSettingsException of ErrorReason
 
-// needed json converters
-type EnumUnionConverter<'T> () =
-    inherit JsonConverter<'T> ()
-
-    let cases = FSharpType.GetUnionCases(typeof<'T>) |> Array.map (fun case -> case.Name, case) |> Map.ofArray
-
-    override _.Read (reader : byref<Utf8JsonReader>, _: Type, _: JsonSerializerOptions) =
-        let rawCase = reader.GetString()
-
-        try
-            let casePrototype = cases.[rawCase]
-            FSharpValue.MakeUnion(casePrototype, args = [| |]) :?> 'T
-        with
-            | :? Collections.Generic.KeyNotFoundException -> failwith $"[{nameof(EnumUnionConverter)}] \"{rawCase}\" is not a valid case for {typeof<'T>.Name}"
-
-    override _.Write (writer: Utf8JsonWriter, value: 'T, _: JsonSerializerOptions) =
-        writer.WriteStringValue(value.ToString())
-
-
 // load user settings
 let loadWithOptions<'T> jsonFilename jsonOptions =
     if File.Exists(jsonFilename)
@@ -49,16 +27,11 @@ let loadWithOptions<'T> jsonFilename jsonOptions =
         with
             | exn -> Error <| InvalidUserSettings(File = jsonFilename, ErrorMessage = exn.Message)
     else
-        Error <| IncompleteSetup(jsonFilename)
+        Error <| MissingFile(Path = jsonFilename)
 
 let load<'T> jsonFilename = loadWithOptions<'T> jsonFilename (JsonSerializerOptions.Default)
 
-let throwExceptionOnError = function
-    | InvalidSetup(missingFile) -> raise (IncompleteSetupException(missingFile))
-    | InvalidUserSettings(file, err) -> raise (InvalidUserSettingsException(file, err))
-    | IncompatibleVersion(settingsType, expected, found) -> raise (IncompatibleVersionException(settingsType, expected, found))
-    | MissingFolder(path) -> raise (IO.DirectoryNotFoundException(path))
-    | MissingFile(path) -> raise (IO.FileNotFoundException(path))
+let throwExceptionOnError = fun err -> raise <| UserSettingsException err
 
 // save
 let saveWithOptions<'T> jsonFile jsonOptions settings =
