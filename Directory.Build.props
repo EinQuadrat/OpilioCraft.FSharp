@@ -5,14 +5,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Authors>Carsten Sch‰fer</Authors>
-    <Copyright>Copyright (c) 2022-2025 by Carsten Sch‰fer</Copyright>
+    <Authors>Carsten Sch√§fer</Authors>
+    <Copyright>Copyright (c) 2022-2025 by Carsten Sch√§fer</Copyright>
 
     <RepositoryUrl>https://github.com/EinQuadrat/OpilioCraft.FSharp.git</RepositoryUrl>
     <PackageTags>OpilioCraft;FSharp</PackageTags>
       
-    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
-    <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>$(SolutionPrefix).$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>$(SolutionPrefix).$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 
     <DebugType>None</DebugType>
     <DebugSymbols>False</DebugSymbols>
