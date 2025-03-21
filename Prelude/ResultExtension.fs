@@ -7,6 +7,10 @@ module Result =
         | Ok result -> Some result
         | Error _ -> None
 
+    let ofOption errorReason = function
+        | Some x -> Ok x
+        | None -> Error errorReason
+
     let transform (okCase : 'a -> Result<'A,'B>) (errorCase : 'b -> Result<'A,'B>) : Result<'a,'b> -> Result<'A,'B> =
         function
         | Ok a -> okCase a
