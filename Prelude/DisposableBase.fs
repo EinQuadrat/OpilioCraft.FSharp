@@ -21,7 +21,7 @@ type DisposableBase() =
     /// Entry point to provide the action to be run for dispose.
     /// <param name="disposing">is <c>true</c> to indicate that method was called from IDisposable.Dispose();
     /// <c>false</c> if called from finalizer </param>
-    member x.Dispose disposing  =
+    member x.Dispose(disposing) =
         if not _isDisposed
         then
             try

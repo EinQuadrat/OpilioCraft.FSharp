@@ -1,9 +1,7 @@
 ﻿namespace OpilioCraft.FSharp.Prelude
 
-type Fingerprint = string
-
 type QualifiedFingerprint =
-    | Full of Fingerprint
+    | Full of string
     | Partly of string
     | Derived of string
     | Unknown
@@ -13,7 +11,7 @@ type QualifiedFingerprint =
         | Full x | Partly x | Derived x -> x
         | Unknown -> invalidOp $"[{nameof QualifiedFingerprint}] cannot extract value of unknown fingerprint"
 
-[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+// [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Fingerprint =
     open System.IO
     open System.Security.Cryptography
@@ -64,15 +62,14 @@ module Fingerprint =
 
     let private _fingerprintRegex = Regex(@"^(.+)#([0-9a-z]{64})$", RegexOptions.Compiled)
 
-    let tryGuessFingerprint (path: string) : Fingerprint option =
+    let tryGuessFingerprint (path: string) : string option =
         let matchResult =
-            path
-            |> Path.GetFileNameWithoutExtension
+            Path.GetFileNameWithoutExtension(path)
             |> _fingerprintRegex.Match
 
         if matchResult.Success
         then
-            Some <| matchResult.Groups.[2].Value
+            Some(matchResult.Groups.[2].Value)
         else
             None
 
@@ -83,7 +80,7 @@ module Fingerprint =
 
     let tryParseStrategy (input: string) : Strategy option =
         match System.Enum.TryParse<Strategy>(input, true) with
-        | true, value -> Some value
+        | true, value -> Some(value)
         | _ -> None
 
     let getFingerprint (strategy: Strategy) (filename: string) =
@@ -104,14 +101,13 @@ module FingerprintExtension =
         | found -> filename.Substring(0, found)
 
     type System.IO.Path with
-        static member ContainsFingerprint(path: string) : bool =
-            Fingerprint.tryGuessFingerprint path
-            |> function | Some x -> true | _ -> false
+        static member ContainsFingerprint(path: string) =
+            Fingerprint.tryGuessFingerprint path |> Option.isSome
 
         static member GetFilenameWithoutFingerprint(path: string) =
             getFilenameWithoutFingerprint path
 
-        static member InjectFingerprint(path: string, fingerprint: Fingerprint) : string =
+        static member InjectFingerprint(path: string, fingerprint: string) : string =
             let directory = System.IO.Path.GetDirectoryName(path)
             let filename = getFilenameWithoutFingerprint path
             let extension = System.IO.Path.GetExtension(path)

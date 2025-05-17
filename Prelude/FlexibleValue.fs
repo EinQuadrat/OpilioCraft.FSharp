@@ -92,15 +92,15 @@ type FlexibleValue =
         // explicit castings
         member x.AsBoolean : bool =
             match x with
-            | Boolean(value) -> value
+            | Boolean value -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.Boolean"
 
         member x.AsDateTime : System.DateTime =
             match x with
-            | DateTime(value) -> value
+            | DateTime value -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.DateTime"
 
         member x.AsString : string =
             match x with
-            | String(value) -> value
+            | String value -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.String"

@@ -24,5 +24,5 @@ module Result =
     let teeOk effect = tee effect ignore
     let teeError effect = tee ignore effect
 
-    let test condition errorOnFail = Result.bind ( fun x -> condition x |> function | true -> Ok(x) | _ -> Error(errorOnFail) )
-    let testWith condition onFail = Result.bind ( fun x -> condition x |> function | true -> Ok(x) | _ -> Error <| onFail x )
+    let test condition errorOnFail = Result.bind (fun x -> condition x |> function | true -> Ok(x) | _ -> Error(errorOnFail))
+    let testWith condition onFail = Result.bind (fun x -> condition x |> function | true -> Ok(x) | _ -> Error <| onFail x)

@@ -10,22 +10,22 @@ let saveGuard (file: string) (plainSaveOperation: string -> unit) =
     let needsBackup = if File.Exists(file) then Some(file + BackupExtension) else None
 
     match needsBackup with
-    | Some(backupFile) ->
+    | Some backupFile ->
         try
             File.Move(file, backupFile)
         with
             | exn -> failwith $"[Guarded IO] cannot create backup file: {exn.Message}"
 
-    | None -> ignore ()
+    | None -> ()
 
-    let errorOccurred : System.Exception option =
+    let errorOccurred : Exception option =
         try
             file |> plainSaveOperation
             None
         with
             | exn ->
-                Console.Error.WriteLine $"[Guarded IO] error occurred while writing content to file {file}: {exn.Message}"
-                Console.Error.WriteLine $"[Guarded IO] trying to restore previous file version from backup..."
+                Console.Error.WriteLine($"[Guarded IO] error occurred while writing content to file {file}: {exn.Message}")
+                Console.Error.WriteLine($"[Guarded IO] trying to restore previous file version from backup...")
                 Some exn
 
     match errorOccurred, needsBackup with
@@ -44,4 +44,4 @@ let saveGuard (file: string) (plainSaveOperation: string -> unit) =
         with
             | exn -> Console.Error.WriteLine $"[Guarded IO] -warning- cannot cleanup backup file: {exn.Message}"
 
-    | _ -> ignore()
+    | _ -> ()
