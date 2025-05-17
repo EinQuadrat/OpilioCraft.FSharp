@@ -6,11 +6,11 @@ open System.IO
 [<Literal>]
 let BackupExtension = ".bak"
 
-let saveGuard (file : string) (plainSaveOperation : string -> unit) =
+let saveGuard (file: string) (plainSaveOperation: string -> unit) =
     let needsBackup = if File.Exists(file) then Some(file + BackupExtension) else None
 
     match needsBackup with
-    | Some backupFile ->
+    | Some(backupFile) ->
         try
             File.Move(file, backupFile)
         with

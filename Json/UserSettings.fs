@@ -7,36 +7,36 @@ open System.Text.Json
 open OpilioCraft.FSharp.Prelude.IO
 
 // errors
-type ErrorReason =
-    | InvalidUserSettings of File:string * ErrorMessage:string
-    | IncompatibleVersion of Type:Type * Expected:Version * Found:Version
-    | MissingProperty of Name:string
-    | MissingFolder of Path:string
-    | MissingFile of Path:string
+type UserSettingsError =
+    | InvalidUserSettingsError of File:string * ErrorMessage:string
+    | IncompatibleVersionError of Type:Type * Expected:Version * Found:Version
+    | MissingPropertyError of Name:string
+    | MissingFolderError of Path:string
+    | MissingFileError of Path:string
 
 // corresponding exceptions
-exception UserSettingsException of ErrorReason
+exception UserSettingsException of UserSettingsError
 
 // load user settings
-let loadWithOptions<'T> jsonFilename jsonOptions =
+let loadWithOptions<'T> jsonFilename jsonOptions : Result<'T, UserSettingsError> =
     if File.Exists(jsonFilename)
     then
         try
             let settingsAsJson = File.ReadAllText(jsonFilename) in
             JsonSerializer.Deserialize<'T>(settingsAsJson, options = jsonOptions) |> Ok
         with
-            | exn -> Error <| InvalidUserSettings(File = jsonFilename, ErrorMessage = exn.Message)
+            | exn -> Error <| InvalidUserSettingsError(File = jsonFilename, ErrorMessage = exn.Message)
     else
-        Error <| MissingFile(Path = jsonFilename)
+        Error <| MissingFileError(Path = jsonFilename)
 
 let load<'T> jsonFilename = loadWithOptions<'T> jsonFilename (JsonSerializerOptions.Default)
 
-let throwExceptionOnError = fun err -> raise <| UserSettingsException err
+let throwExceptionOnError : UserSettingsError -> UserSettingsException = raise << UserSettingsException
 
 // save
 let saveWithOptions<'T> jsonFile jsonOptions settings =
     let json = JsonSerializer.Serialize<'T>(settings, options = jsonOptions) in
-    saveGuard jsonFile <| fun uri -> File.WriteAllText(uri, json)
+    saveGuard jsonFile (fun uri -> File.WriteAllText(uri, json))
 
 let save<'T> jsonFile = saveWithOptions<'T> jsonFile (JsonSerializerOptions.Default)
 
@@ -58,10 +58,12 @@ module Version =
     [<Literal>]
     let VersionPropertyName = "Version"
 
-    let isValidVersion expectedVersion settings = tryGetProperty VersionPropertyName settings |> function
-        | None ->
-            Error <| IncompatibleVersion(Type = settings.GetType(), Expected = expectedVersion, Found = Version())
-        | Some(foundVersion : Version) when foundVersion.CompareTo(expectedVersion) <> 0 ->
-            Error <| IncompatibleVersion(Type = settings.GetType(), Expected = expectedVersion, Found = foundVersion)
-        | _ ->
-            Ok settings
+    let isValidVersion expectedVersion settings =
+        tryGetProperty VersionPropertyName settings
+        |> function
+            | None ->
+                Error <| IncompatibleVersionError(Type = settings.GetType(), Expected = expectedVersion, Found = Version())
+            | Some(foundVersion : Version) when foundVersion.CompareTo(expectedVersion) <> 0 ->
+                Error <| IncompatibleVersionError(Type = settings.GetType(), Expected = expectedVersion, Found = foundVersion)
+            | _ ->
+                Ok settings

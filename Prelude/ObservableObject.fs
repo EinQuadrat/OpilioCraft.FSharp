@@ -3,7 +3,7 @@
 open System.ComponentModel
 
 // Property enabled object
-type ObservableObject () =
+type ObservableObject() =
     // Helper method to support quotations form
     let getPropertyName = function 
         | Quotations.Patterns.PropertyGet(_, pi, _) -> pi.Name
@@ -20,10 +20,10 @@ type ObservableObject () =
     member this.PropertyChanged = (this :> INotifyPropertyChanged).PropertyChanged
 
     // Notification methods
-    member this.RaisePropertyChanged propertyName = 
+    member this.RaisePropertyChanged(propertyName) =
         _event_PropertyChanged.Trigger(this, PropertyChangedEventArgs(propertyName))
         // USAGE: this.RaisePropertyChanged "nameOfProperty"
 
-    member this.RaisePropertyChanged quotation = 
+    member this.RaisePropertyChanged(quotation) =
         quotation |> getPropertyName |> this.RaisePropertyChanged
         // USAGE: this.RaisePropertyChanged <@ this.Property @>

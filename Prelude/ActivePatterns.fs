@@ -10,14 +10,14 @@ let (|HeadOfArray|_|) theArray headValue =
     | [| headValue |] -> Some (Array.tail theArray)
     | _ -> None
 
-let (|IsFile|_|) (whatever : string) =
+let (|IsFile|_|) (whatever: string) =
     match File.Exists(whatever) with
     | true -> Some(FileInfo(whatever))
     | _ -> None
 
 let (|Match|_|) pattern input =
     let m = Regex.Match(input, pattern) in
-    if m.Success then Some (m) else None
+    if m.Success then Some(m) else None
 
 // active patterns for try-parsing strings
 let (|IsBoolean|_|)         = parseBoolean

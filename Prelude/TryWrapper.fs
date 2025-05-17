@@ -16,7 +16,7 @@ let parseSingle         = tryWrapper System.Single.TryParse
 let parseTimeSpan       = tryWrapper System.TimeSpan.TryParse
 
 // conditional dictionary access
-let tryGetValue (key : 'a) (dict : System.Collections.Generic.Dictionary<'a,'b>) : 'b option =
+let tryGetValue (key: 'a) (dict: System.Collections.Generic.Dictionary<'a,'b>) : 'b option =
     dict.TryGetValue(key)
     |> function
         | true, v    -> Some v

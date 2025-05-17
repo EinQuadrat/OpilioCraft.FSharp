@@ -19,7 +19,7 @@ type FlexibleValue =
     | TimeSpan of System.TimeSpan
 
     with
-        override x.ToString () =
+        override x.ToString() =
             match x with
             | Boolean boolValue -> boolValue.ToString()
             | Numeral numValue -> numValue.ToString()
@@ -31,7 +31,7 @@ type FlexibleValue =
             | DateTime datetimeValue -> datetimeValue.ToString("yyyy-MM-ddTHH:mm:ss")
             | TimeSpan timespanValue -> timespanValue.ToString("c")
         
-        static member inline TryWrap (incoming : 'a) : FlexibleValue option =
+        static member inline TryWrap (incoming: 'a) : FlexibleValue option =
             match box incoming with
             | :? FlexibleValue as flexValue       -> Some flexValue // prevent nesting
             | :? System.Boolean as boolValue      -> Some (Boolean boolValue)
@@ -45,13 +45,13 @@ type FlexibleValue =
             | :? System.TimeSpan as timespanValue -> Some (TimeSpan timespanValue)
             | _ -> None
 
-        static member inline Wrap (incoming : 'a) : FlexibleValue =
-            FlexibleValue.TryWrap incoming
+        static member inline Wrap(incoming: 'a) : FlexibleValue =
+            FlexibleValue.TryWrap(incoming)
             |> Option.defaultWith (fun _ -> raise <| FlexibleValueException $"unsupported support incoming type: {incoming.GetType().FullName}")
 
-        static member inline WrapOrStringify (incoming : 'a) : FlexibleValue =
-            FlexibleValue.TryWrap incoming
-            |> Option.defaultValue (String (incoming.ToString()))
+        static member inline WrapOrStringify(incoming: 'a) : FlexibleValue =
+            FlexibleValue.TryWrap(incoming)
+            |> Option.defaultValue (String(incoming.ToString()))
 
         member x.Unwrap : obj =
             match x with
@@ -68,8 +68,8 @@ type FlexibleValue =
             | Time plainValue     -> plainValue :> obj
             | TimeSpan plainValue -> plainValue :> obj
 
-        member x.TryCompareTo value : int option =
-            let compareFlexibleValues (fv1 : FlexibleValue) (fv2 : FlexibleValue) : int option =
+        member x.TryCompareTo(value) : int option =
+            let compareFlexibleValues (fv1: FlexibleValue) (fv2: FlexibleValue) : int option =
                 match (fv1, fv2) with
                     | Boolean a, Boolean b -> a.CompareTo(b) |> Some
                     | Numeral a, Numeral b -> a.CompareTo(b) |> Some
@@ -92,15 +92,15 @@ type FlexibleValue =
         // explicit castings
         member x.AsBoolean : bool =
             match x with
-            | Boolean value -> value
+            | Boolean(value) -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.Boolean"
 
         member x.AsDateTime : System.DateTime =
             match x with
-            | DateTime value -> value
+            | DateTime(value) -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.DateTime"
 
         member x.AsString : string =
             match x with
-            | String value -> value
+            | String(value) -> value
             | _ -> failwith $"cannot cast {x.GetType().FullName} to System.String"

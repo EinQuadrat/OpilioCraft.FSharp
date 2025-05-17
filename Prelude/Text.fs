@@ -2,13 +2,13 @@
 
 open System.Text
 
-let trim (stringValue : string) =
+let trim (stringValue: string) =
     stringValue.Trim()
 
-let tokenizeString (input : string) =
+let tokenizeString (input: string) =
     let chars = input.Trim().ToCharArray() |> Array.toList
 
-    let rec tokenizer remaining delim insideWord (word : StringBuilder option) wordList : string list =
+    let rec tokenizer remaining delim insideWord (word: StringBuilder option) wordList : string list =
         match remaining with
         | ' ' :: rest when not insideWord -> // ignore spaces outside strings
             tokenizer rest delim false None wordList

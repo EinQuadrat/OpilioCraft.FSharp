@@ -6,8 +6,8 @@ open CmdletExtension
 
 [<AbstractClass>]
 [<CmdletBinding(DefaultParameterSetName="Path")>]
-type public PathSupportingCommand () =
-    inherit PSCmdlet ()
+type public PathSupportingCommand() =
+    inherit PSCmdlet()
 
     // parameters
     [<Parameter(Position=0, Mandatory=true, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true, ParameterSetName="Path")>]
@@ -21,19 +21,19 @@ type public PathSupportingCommand () =
     member val LiteralPath : String array = [| |] with get, set
 
     // cmdlet behaviour
-    member x.TypedParameterSet =
+    member x.IsTypedParameterSet =
         match x.ParameterSetName with
         | name when name.StartsWith("Path") -> Path name
         | name when name.StartsWith("LiteralPath") -> LiteralPath name
         | name -> Other name
 
-    member x.ResolvePath = x.GetResolvedProviderPathFromPSPath >> fst
+    member x.ResolvePath(path) = x.GetResolvedProviderPathFromPSPath(path) |> fst
 
     override x.ProcessRecord() =
         base.ProcessRecord()
 
         try
-            match x.TypedParameterSet with
+            match x.IsTypedParameterSet with
             | Path _ ->
                 Seq.collect x.ResolvePath x.Path
                 |> Seq.map (Assert.fileExists "given path does not exist or is not accessible")
@@ -48,7 +48,7 @@ type public PathSupportingCommand () =
                 x.ProcessNonPath ()
 
         with
-            | exn -> exn |> x.WriteAsError ErrorCategory.NotSpecified
+            | exn -> x.WriteAsError(ErrorCategory.NotSpecified, exn)
 
     abstract member ProcessPath : string -> unit
     abstract member ProcessNonPath : unit -> unit
@@ -65,7 +65,7 @@ and TypedParameterSet =
 
 [<AbstractClass>]
 [<CmdletBinding(DefaultParameterSetName="Path")>]
-type public PathExpectingCommand () =
-    inherit PathSupportingCommand ()
+type public PathExpectingCommand() =
+    inherit PathSupportingCommand()
 
     override _.ProcessNonPath() = raise <| InvalidOperationException()
