@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
 
-    <Version>9.0.2</Version>
+    <Version>9.0.3</Version>
     <Description>Collection of some useful code snippets for Json-based stuff</Description>
 
   </PropertyGroup>
