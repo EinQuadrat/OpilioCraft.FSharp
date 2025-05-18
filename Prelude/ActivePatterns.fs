@@ -1,4 +1,4 @@
-﻿module OpilioCraft.FSharp.Prelude.ActivePatterns
+﻿module OpilioCraft.FSharp.ActivePatterns
 
 open System.IO
 open System.Text.RegularExpressions
@@ -12,12 +12,12 @@ let (|HeadOfArray|_|) theArray headValue =
 
 let (|IsFile|_|) (whatever: string) =
     match File.Exists(whatever) with
-    | true -> Some(FileInfo(whatever))
+    | true -> Some (FileInfo whatever)
     | _ -> None
 
 let (|Match|_|) pattern input =
     let m = Regex.Match(input, pattern) in
-    if m.Success then Some(m) else None
+    if m.Success then Some m else None
 
 // active patterns for try-parsing strings
 let (|IsBoolean|_|)         = parseBoolean

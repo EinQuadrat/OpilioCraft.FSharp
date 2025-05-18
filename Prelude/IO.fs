@@ -1,4 +1,4 @@
-﻿module OpilioCraft.FSharp.Prelude.IO
+﻿module OpilioCraft.FSharp.IO
 
 open System
 open System.IO

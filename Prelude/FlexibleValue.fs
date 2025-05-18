@@ -1,4 +1,4 @@
-﻿namespace OpilioCraft.FSharp.Prelude
+﻿namespace OpilioCraft.FSharp.FlexibleValue
 
 exception FlexibleValueException of ErrorMsg:string
     with override x.Message = $"[FlexibleValue] {x.ErrorMsg}"

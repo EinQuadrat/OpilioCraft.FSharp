@@ -4,7 +4,7 @@ open System
 open System.IO
 open System.Text.Json
 
-open OpilioCraft.FSharp.Prelude.IO
+open OpilioCraft.FSharp.IO
 
 // errors
 type UserSettingsError =
@@ -63,7 +63,7 @@ module Version =
         |> function
             | None ->
                 Error <| IncompatibleVersionError(Type = settings.GetType(), Expected = expectedVersion, Found = Version())
-            | Some(foundVersion : Version) when foundVersion.CompareTo(expectedVersion) <> 0 ->
+            | Some (foundVersion : Version) when foundVersion.CompareTo(expectedVersion) <> 0 ->
                 Error <| IncompatibleVersionError(Type = settings.GetType(), Expected = expectedVersion, Found = foundVersion)
             | _ ->
                 Ok settings

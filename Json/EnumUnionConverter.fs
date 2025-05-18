@@ -15,7 +15,7 @@ type EnumUnionConverter<'T>() =
         let rawCase = reader.GetString()
 
         try
-            let casePrototype = cases.[rawCase]
+            let casePrototype = cases[rawCase]
             FSharpValue.MakeUnion(casePrototype, args = [| |]) :?> 'T
         with
             | :? Collections.Generic.KeyNotFoundException -> failwith $"[{nameof(EnumUnionConverter)}] \"{rawCase}\" is not a valid case for {typeof<'T>.Name}"

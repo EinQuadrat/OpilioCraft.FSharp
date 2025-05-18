@@ -1,4 +1,4 @@
-﻿module OpilioCraft.FSharp.Prelude.Text
+﻿module OpilioCraft.FSharp.Text
 
 open System.Text
 

@@ -1,21 +1,20 @@
-﻿namespace OpilioCraft.FSharp.Prelude
+﻿namespace OpilioCraft.FSharp
 
-type QualifiedFingerprint =
-    | Full of string
-    | Partly of string
-    | Derived of string
-    | Unknown
-
-    member x.Value =
-        match x with
-        | Full x | Partly x | Derived x -> x
-        | Unknown -> invalidOp $"[{nameof QualifiedFingerprint}] cannot extract value of unknown fingerprint"
-
-// [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Fingerprint =
     open System.IO
     open System.Security.Cryptography
     open System.Text.RegularExpressions
+
+    type QualifiedFingerprint =
+        | Full of string
+        | Partly of string
+        | Derived of string
+        | Unknown
+
+        member x.Value =
+            match x with
+            | Full x | Partly x | Derived x -> x
+            | Unknown -> invalidOp $"[{nameof QualifiedFingerprint}] cannot extract value of unknown fingerprint"
 
     // Algorithm used
     let private hashingAlgorithm = SHA256.Create();
@@ -74,18 +73,18 @@ module Fingerprint =
             None
 
     // High-level API
-    type Strategy =
+    type FingerprintStrategy =
         | Calculate = 0
         | GuessFirst = 1
 
-    let tryParseStrategy (input: string) : Strategy option =
-        match System.Enum.TryParse<Strategy>(input, true) with
+    let tryParseStrategy (input: string) : FingerprintStrategy option =
+        match System.Enum.TryParse<FingerprintStrategy>(input, true) with
         | true, value -> Some(value)
         | _ -> None
 
-    let getFingerprint (strategy: Strategy) (filename: string) =
+    let getFingerprint (strategy: FingerprintStrategy) (filename: string) =
         match strategy with
-        | Strategy.GuessFirst -> tryGuessFingerprint filename
+        | FingerprintStrategy.GuessFirst -> tryGuessFingerprint filename
         | _ -> None
 
         |> Option.map Derived

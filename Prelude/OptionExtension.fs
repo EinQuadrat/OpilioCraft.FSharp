@@ -1,19 +1,21 @@
-﻿namespace OpilioCraft.FSharp.Prelude
+﻿namespace OpilioCraft.FSharp
 
-// simplify Option handling
+// align usage with F# core library
 [<RequireQualifiedAccessAttribute>]
 module Option =
-    let ifNone action maybe =
-        if Option.isNone maybe then action ()
-        maybe
+    let ifNone action opt =
+        if Option.isNone opt then action ()
+        opt
 
     let ofResult = function
         | Ok result -> Some result
         | Error _ -> None
 
-    let tee action = function
-        | Some value as maybe -> action value ; maybe
+    let tee f = function
+        | Some value as opt -> f value ; opt
         | None -> None
+
+    let teeP predicate f = tee (fun value -> if predicate value then f value)
 
     let filterOrElseWith (predicate: 'T -> bool) (elseAction: 'T -> unit) = function
         | Some value as opt -> if predicate value then opt else (elseAction value ; None)

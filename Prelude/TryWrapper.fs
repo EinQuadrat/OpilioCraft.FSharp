@@ -1,4 +1,4 @@
-﻿module OpilioCraft.FSharp.Prelude.TryWrapper
+﻿module OpilioCraft.FSharp.TryWrapper
 
 // convenient, functional TryParse wrappers returning option<'a>
 let tryWrapper (tryFunction: string -> bool * _) = tryFunction >> function

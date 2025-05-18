@@ -1,4 +1,4 @@
-﻿namespace OpilioCraft.FSharp.Prelude
+﻿namespace OpilioCraft.FSharp
 
 open System.IO
 
