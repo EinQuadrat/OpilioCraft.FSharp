@@ -65,4 +65,9 @@ let inline teeIfNot cond f x = teeP (fun _ -> cond = false) f x
 /// <summary>
 /// Applies a function to a value if the predicate is true, otherwise returns the value unchanged.
 /// </summary>
-let inline applyP p f x = if p x then f x else x
+let inline applyIf p f x = if p x then f x else x
+
+/// <summary>
+/// Applies a function to a value if the predicate is false, otherwise returns the value unchanged.
+/// </summary>
+let inline applyIfNot p f x = if not (p x) then f x else x

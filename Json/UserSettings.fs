@@ -40,19 +40,12 @@ let saveWithOptions<'T> jsonFile jsonOptions settings =
 
 let save<'T> jsonFile = saveWithOptions<'T> jsonFile (JsonSerializerOptions.Default)
 
-// verification
-let verify test onFail settings =
-    match test settings with
-    | true -> Ok settings
-    | _ -> Error <| onFail settings
-
 // supportive functions
 let tryGetProperty name settings : 'T option =
     settings.GetType().GetProperty(name)
     |> Option.ofObj
     |> Option.map (fun prop -> prop.GetValue(box settings))
     |> Option.bind (function | :? 'T as typedValue -> Some typedValue | _ -> None)
-
 
 module Version =
     [<Literal>]
