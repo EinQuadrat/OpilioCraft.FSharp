@@ -31,7 +31,7 @@ let tokenizeString (input: string) =
             
     tokenizer chars ' ' false None []
 
-let vbLike (text: string) (pattern: string) =
+let vbLike (pattern: string) (text: string) =
     // Source - https://stackoverflow.com/a
     // Posted by Tom
     // Retrieved 2025-12-29, License - CC BY-SA 4.0
