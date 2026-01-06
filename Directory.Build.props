@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <Authors>Carsten Schäfer</Authors>
-    <Copyright>Copyright (c) 2022-2025 by Carsten Schäfer</Copyright>
+    <Copyright>Copyright (c) 2022-2026 by Carsten Schäfer</Copyright>
 
     <RepositoryUrl>https://github.com/EinQuadrat/OpilioCraft.FSharp.git</RepositoryUrl>
     <PackageTags>OpilioCraft;FSharp</PackageTags>
