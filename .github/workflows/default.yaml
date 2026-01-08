@@ -1,9 +1,7 @@
-name: Build and Publish
+name: Default Workflow - Build and Publish
 
 on:
-  [push, workflow_dispatch]:
-    paths-ignore:
-      - 'Windows/**'
+  [push, workflow_dispatch]
 
 env:
   DOTNET_VERSION: '10.x'
