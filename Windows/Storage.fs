@@ -7,14 +7,28 @@ open OpilioCraft.FSharp.Text
 
 // ----------------------------------------------------------------------------
 
+// StorageFolder extensions
+let itemExists (parent: StorageFolder) (itemName: string) =
+    match parent.TryGetItemAsync(itemName).GetAwaiter().GetResult() with
+    | null -> false
+    | _ -> true
+
+let folderExists (parent: StorageFolder) (folderName: string) =
+    match parent.TryGetItemAsync(folderName).GetAwaiter().GetResult() with
+    | :? StorageFolder -> true
+    | _ -> false
+
+let fileExists (parent: StorageFolder) (fileName: string) =
+    match parent.TryGetItemAsync(fileName).GetAwaiter().GetResult() with
+    | :? StorageFile -> true
+    | _ -> false
+
+// folder listing and matching
 let getFolders (current: StorageFolder) : StorageFolder seq =
     current.GetFoldersAsync().GetAwaiter().GetResult()
 
 let getMatchingFolders (matcher: string -> bool) (current: StorageFolder) : StorageFolder list =
     getFolders current |> Seq.filter (_.Name >> matcher) |> Seq.toList
-
-let matchExact pattern value = (value = pattern)
-let matchLike pattern value = vbLike value pattern
 
 let tryGetMatchingFolders (matcher: string -> bool) (current: StorageFolder) =
     getMatchingFolders matcher current
