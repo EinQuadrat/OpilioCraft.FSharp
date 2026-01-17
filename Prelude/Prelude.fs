@@ -3,7 +3,7 @@
 /// <summary>
 /// Check if a value is null. Useful e.g. in context of JSON parsing.
 /// </summary>
-let inline isNull value = value = Unchecked.defaultof<_>
+let inline isNull value = match box value with | null -> true | _ -> false
 
 /// <summary>
 /// Check if a value is not null. Useful e.g. in context of JSON parsing.
