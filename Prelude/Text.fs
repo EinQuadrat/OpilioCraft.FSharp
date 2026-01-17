@@ -32,42 +32,51 @@ let tokenizeString (input: string) =
     tokenizer chars ' ' false None []
 
 let vbLike (pattern: string) (text: string) =
-    // Source - https://stackoverflow.com/a
-    // Posted by Tom
-    // Retrieved 2025-12-29, License - CC BY-SA 4.0
+    // Source - adapted for correctness and escaping
+    if pattern = null then false
+    elif pattern = "" then text = ""
+    else
+        let sb = StringBuilder()
+        let mutable insideList = false
+        let mutable prevInsideList = false
+        let patLen = pattern.Length
 
-    let resultPattern = StringBuilder()
-    let mutable insideList = false
-    let mutable prevInsideList = false
+        for i in 0 .. patLen - 1 do
+            let c = pattern.[i]
+            let tempInsideList = insideList
 
-    for i in 0 .. pattern.Length - 1 do
-        let c = pattern.[i]
-        let tempInsideList = insideList
+            // Manage pattern start: do not anchor if pattern starts with '*'
+            if i = 0 && c <> '*' then
+                sb.Append('^') |> ignore
 
-        // Manage pattern start
-        if i = 0 && c <> '*' then
-            resultPattern.Append('^') |> ignore
-        // Manage characterlists
-        if c = '[' && not insideList then
-            insideList <- true
-            resultPattern.Append(c) |> ignore
-        elif c = ']' && insideList then
-            insideList <- false
-            resultPattern.Append(c) |> ignore
-        elif c = '!' && insideList && not prevInsideList then
-            // Special chars for Like that need to be converted
-            resultPattern.Append('^') |> ignore
-        elif c = '?' && not insideList then
-            resultPattern.Append('.') |> ignore
-        elif c = '#' && not insideList then
-            resultPattern.Append(@"\d") |> ignore
-        elif c = '*' && i = 0 then
-            // Nothing to append
-            ()
-        else
-            resultPattern.Append(c) |> ignore
+            if c = '[' && not insideList then
+                insideList <- true
+                sb.Append('[') |> ignore
+            elif c = ']' && insideList then
+                insideList <- false
+                sb.Append(']') |> ignore
+            elif c = '!' && insideList && not prevInsideList then
+                // '!' as first char inside a character class means negation in VB-like -> '^' in regex
+                sb.Append('^') |> ignore
+            elif not insideList then
+                match c with
+                | '?' -> sb.Append('.') |> ignore
+                | '#' -> sb.Append(@"\d") |> ignore
+                | '*' when (i = 0 || i = patLen - 1) -> () // leading/trailing '*' suppresses anchors instead of being explicitly added
+                | '*' -> sb.Append(".*") |> ignore
+                | _ ->
+                    // Escape any regex metacharacter outside character classes
+                    sb.Append(System.Text.RegularExpressions.Regex.Escape(c.ToString())) |> ignore
+            else
+                // inside character class: append raw character except escape backslash
+                if c = '\\' then sb.Append(@"\\") |> ignore
+                else sb.Append(c) |> ignore
 
-        prevInsideList <- tempInsideList
+            prevInsideList <- tempInsideList
 
-    let regexPattern = resultPattern.ToString()
-    System.Text.RegularExpressions.Regex.IsMatch(text, regexPattern)
+        // Manage end anchor: if pattern does not end with '*' then anchor end
+        if patLen > 0 && pattern.[patLen - 1] <> '*' then
+            sb.Append('$') |> ignore
+
+        let regexPattern = sb.ToString()
+        System.Text.RegularExpressions.Regex.IsMatch(text, regexPattern)
