@@ -21,11 +21,6 @@ let inline (!!) details = Error details
 let inline (!!!) exn details = raise (exn details)
 
 /// <summary>
-/// Simplifies verification of critical conditions.
-/// </summary>
-let inline ( -||- ) condition exn = if not condition then raise exn
-
-/// <summary>
 /// Allows applying a side effect without changing the value. Same as operator |>!.
 /// </summary>
 /// <param name="x">The value.</param>
@@ -53,21 +48,26 @@ let inline teeP p f x = ignore(if p x then f x) ; x
 /// <param name="cond">The condition.</param>
 /// <param name="x">The value.</param>
 /// <param name="f">The side effect to apply.</param>
-let inline teeIf cond f x = teeP (fun _ -> cond = true) f x
+let teeIf cond = teeP (fun _ -> cond = true)
 
 /// <summary>
 /// Applys a side effect only if cond is false. Returns the value without changing it.
 /// </summary>
 /// <param name="cond">The condition.</param>
 /// <param name="x">The value.</param>
-let inline teeIfNot cond f x = teeP (fun _ -> cond = false) f x
+let teeIfNot cond = teeP (fun _ -> cond = false)
+
+/// <summary>
+/// Applies a function to a value if the predicate applied to the value is true, otherwise returns the value unchanged.
+/// </summary>
+let inline applyP p f x = if p x then f x else x
 
 /// <summary>
 /// Applies a function to a value if the predicate is true, otherwise returns the value unchanged.
 /// </summary>
-let inline applyIf p f x = if p x then f x else x
+let applyIf cond = applyP (fun _ -> cond = true)
 
 /// <summary>
 /// Applies a function to a value if the predicate is false, otherwise returns the value unchanged.
 /// </summary>
-let inline applyIfNot p f x = if not (p x) then f x else x
+let applyIfNot cond = applyP (fun _ -> cond = false)

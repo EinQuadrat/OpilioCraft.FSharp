@@ -4,7 +4,7 @@ open System
 open Microsoft.FSharp.Reflection
 
 /// Module for working with attributes on union cases.
-module AttributeSupport =
+module private AttributeSupport =
     /// Gets the first attribute of the specified type from a union case, if present.
     let getUnionCaseAttribute<'A when 'A :> Attribute> (value: obj) =
         let valueType = value.GetType()
