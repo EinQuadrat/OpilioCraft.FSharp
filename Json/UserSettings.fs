@@ -41,7 +41,7 @@ let saveWithOptions<'T> jsonFile jsonOptions settings =
 let save<'T> jsonFile = saveWithOptions<'T> jsonFile (JsonSerializerOptions.Default)
 
 // supportive functions
-let tryGetProperty name settings : 'T option =
+let tryGetProperty<'T> name settings : 'T option =
     settings.GetType().GetProperty(name)
     |> Option.ofObj
     |> Option.map (fun prop -> prop.GetValue(box settings))
@@ -52,7 +52,7 @@ module Version =
     let VersionPropertyName = "Version"
 
     let isValidVersion expectedVersion settings =
-        tryGetProperty VersionPropertyName settings
+        tryGetProperty<Version> VersionPropertyName settings
         |> function
             | None ->
                 Error <| IncompatibleVersionError(Type = settings.GetType(), Expected = expectedVersion, Found = Version())
